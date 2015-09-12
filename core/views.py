@@ -21,9 +21,8 @@ def index(request):
 
 
 def standard(request, **kwargs):
-    """
-    The "standard" unwinnable game control.
-    """
+    """The "standard" unwinnable game control."""
+
     # Get the move from the GET args, if any
     move = kwargs.get('move', None)
     if move:
@@ -94,11 +93,12 @@ def standard(request, **kwargs):
 
 
 def jerk(request, **kwargs):
-    """
-    The Jerk Computer game.  This is the opponent that accomplishes exactly what the instructions say--never lose--but
+    """The Jerk Computer game.
+
+    This is the opponent that accomplishes exactly what the instructions say--never lose--but
     he's kind of a jerk about it.  He doesn't follow the official tic-tac-toe rules (it's not explicitly required by
-    the instructions).
-    """
+    the instructions)."""
+
     move = kwargs.get('move', None)
     if move:
         winners = []
@@ -118,13 +118,14 @@ def jerk(request, **kwargs):
 
 
 def nsa(request, **kwargs):
-    """
-    The NSA game.  They're always listening...
+    """The NSA game.
+
+    They're always listening...
 
     Basically, the "NSA" listens to every event, so even a hover by the human triggers a move by the NSA.  With each
     move, the occupied positions are sent to the view to determine when there is a win.  Only NSA moves are recorded, so
-    naturally, the human can't win against the NSA.  (Just like life, man)
-    """
+    naturally, the human can't win against the NSA.  (Just like life, man)"""
+
     move = kwargs.get('move', None)
     if move:
         try:
