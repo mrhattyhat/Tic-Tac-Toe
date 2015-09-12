@@ -15,9 +15,8 @@ class Game(object):
     o = []
 
     def available(self, board=None):
-        """
-        Return a list of available moves based on the position already held by both players
-        """
+        """Return a list of available moves based on the position already held by both players"""
+
         if not board:
             board = self.x + self.o
         moves = []
@@ -29,16 +28,14 @@ class Game(object):
         return moves
 
     def take(self, player, pos):
-        """
-        Assign the chose position to the given player
-        """
+        """Assign the chose position to the given player"""
+
         attr = self.__getattribute__(PLAYERS[player])
         attr.append(pos)
 
     def eval_game(self, player, depth=0):
-        """
-        Determine the next move based on the implementation of the famous minimax algorithm
-        """
+        """Determine the next move based on the implementation of the famous minimax algorithm"""
+
         depth += 1  # Recursion depth, incrementing by one with each pass
         score = 0  # The minimax score for the move being evaluated
         scores = {}  # The collection of scores for each of the moves evaluated
@@ -62,11 +59,9 @@ class Game(object):
         else:
             return max(scores, key=scores.get)  # Return the highest scoring move
 
-
     def winner(self, player):
-        """
-        Check to see if <player> has won the game
-        """
+        """Check to see if <player> has won the game"""
+
         # Get the occupied positions held by <player>
         occupied = self.__getattribute__(PLAYERS[player])
         # Loop over all 3-digit permutations of <player>'s positions, comparing each one against known win vectors.
@@ -77,11 +72,12 @@ class Game(object):
         return False
 
     def winnable(self, player):
+        """Test if the current game state is winnable by <player>.
+
+        If true, return the winning position.  Obviously, if the game is winnable for <player>, it is also blockable for
+        the opponent, so this same function may be used for either detection depending on whose turn it is.
         """
-        Test if the current game state is winnable by <player>.  If true, return the winning position.
-        Obviously, if the game is winnable for <player>, it is also blockable for the opponent, so this same function
-        may be used for either detection depending on whose turn it is.
-        """
+
         # Get the occupied positions for the player
         occupied = self.__getattribute__(PLAYERS[player])
         # Get the occupied position for the opponent
@@ -102,21 +98,18 @@ class Game(object):
         return False
 
     def switch_player(self, player):
-        """
-        Return the opponent of <player>.  This becomes useful for the back-and-forth nature of minimax.
-        """
+        """Return the opponent of <player>.  This becomes useful for the back-and-forth nature of minimax."""
+
         return [k for k, v in PLAYERS.iteritems() if k != player][0]
 
     def clear(self, player, pos):
-        """
-        Clear a give move from <player>'s occupied positions
-        """
+        """Clear a given move from <player>'s occupied positions"""
+
         moves = self.__getattribute__(PLAYERS[player])
         moves.remove(pos)
 
     def reset(self):
-        """
-        Reset the game
-        """
-        self.x = []
-        self.o = []
+        """Reset the game"""
+
+        Game.x = []
+        Game.o = []

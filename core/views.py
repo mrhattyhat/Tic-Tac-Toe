@@ -5,7 +5,7 @@ is protected by United States and international intellectual property law, inclu
 and treaty provisions.
 """
 
-from django.shortcuts import render, Http404, HttpResponse
+from django.shortcuts import render, Http404, HttpResponse, redirect
 
 import json
 import random
@@ -17,7 +17,8 @@ from core.game import Game
 
 
 def index(request):
-    return render(request, 'index.html')
+    return redirect('standard')
+
 
 def standard(request, **kwargs):
     """

@@ -1,4 +1,5 @@
 # Django settings for TicTacToe project.
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -6,6 +7,8 @@ TEMPLATE_DEBUG = DEBUG
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
+
+PROJECT_PATH = os.path.dirname(os.path.realpath(os.path.dirname(__file__)))
 
 MANAGERS = ADMINS
 
@@ -72,7 +75,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "C:/Ryan/Work Stuff/Projects/CoxMedia/Tic-Tac-Toe/TicTacToe/static",
+    os.path.join(PROJECT_PATH, 'static'),
 )
 
 # List of finder classes that know how to find static files in
