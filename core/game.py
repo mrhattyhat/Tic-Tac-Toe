@@ -13,14 +13,15 @@ from core.const import PLAYERS, WIN_VECTORS
 class Game(object):
     x = []
     o = []
+    move = None
+    move_scores = {}
 
-    def available(self, board=None):
+    @property
+    def available(self):
         """Return a list of available moves based on the position already held by both players"""
 
-        if not board:
-            board = self.x + self.o
+        board = self.x + self.o
         moves = []
-        p = 0
         for p in range(0, 9):
             if p not in board:
                 moves.append(p)
@@ -33,31 +34,60 @@ class Game(object):
         attr = self.__getattribute__(PLAYERS[player])
         attr.append(pos)
 
-    def eval_game(self, player, depth=0):
+    @property
+    def next_move(self):
+        scores = {}
+
+        win = self.winnable('machine')
+        if win:
+            return win
+
+        block = self.winnable('human')
+        if block:
+            return block
+
+        self.move_scores = {}
+        self.eval_tree('machine')
+        scores = self.move_scores[1]
+
+        return max(scores, key=scores.get)
+
+    def eval_tree(self, player, depth=0):
         """Determine the next move based on the implementation of the famous minimax algorithm"""
 
         depth += 1  # Recursion depth, incrementing by one with each pass
-        score = 0  # The minimax score for the move being evaluated
         scores = {}  # The collection of scores for each of the moves evaluated
         opponent = self.switch_player(player)  # opponent gets passed to next_move for minimax recursion
-        if self.winner(opponent):
-            if depth % 2 == 0:
-                return 10 - depth
-            else:
-                return depth - 10
-        board = self.available()  # get available moves
-        # If no moves left, the game is over and we have had no winners, so it's a draw.  Return a score of 0
-        if len(board) == 0:
-            return 0
-        for m in board:  # Start evaluating available moves
+        bumper = '--- ' * depth
+        print self.available
+
+        for m in self.available:  # Start evaluating available moves
             self.take(player, m)  # Take the proposed move
-            score = self.eval_game(opponent, depth)  # play out the game and return the score of the proposed move
-            self.clear(player, m)  # Once scored, roll back the move
-            scores[m] = score  # Add the score to the collection
-        if depth % 2 == 0:
-            return min(scores, key=scores.get)  # Return the lowest scoring move
-        else:
-            return max(scores, key=scores.get)  # Return the highest scoring move
+            print 'Move {0} {1} {2} takes position {3}'.format(depth, bumper, player, m)
+            if self.winner(player):
+                print '#### {0} wins ####'.format(player)
+                self.clear(player, m)
+                if player == 'machine':
+                    scores[m] = 10
+                else:
+                    scores[m] = -10
+                break
+            scores[m] = self.eval_tree(opponent, depth)
+            self.clear(player, m)
+
+        try:
+            if player == 'machine':
+                score = max(scores.itervalues())
+            else:
+                score = min(scores.itervalues())
+            print 'Move {0} scores: {1}'.format(depth, scores)
+            self.move_scores[depth] = scores
+            print 'Returning {0} for {1}'.format(score, player)
+            return score
+        except ValueError:
+            print 'Returning 0 for move {0}'.format(depth)
+
+            return 0
 
     def winner(self, player):
         """Check to see if <player> has won the game"""
@@ -108,8 +138,9 @@ class Game(object):
         moves = self.__getattribute__(PLAYERS[player])
         moves.remove(pos)
 
-    def reset(self):
+    @classmethod
+    def reset(cls):
         """Reset the game"""
 
-        Game.x = []
-        Game.o = []
+        cls.x = []
+        cls.o = []

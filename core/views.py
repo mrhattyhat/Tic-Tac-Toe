@@ -1,18 +1,18 @@
-"""
-Copyright (C) 2014 Ryan Hansen.  All rights reserved.
+""" Copyright (C) 2014 Ryan Hansen.  All rights reserved.
+
 This source code (including its associated software) is owned by Ryan Hansen and
 is protected by United States and international intellectual property law, including copyright laws, patent laws,
 and treaty provisions.
 """
 
-from django.shortcuts import render, Http404, HttpResponse, redirect
-
 import json
 import random
-
+import traceback
 from time import sleep
 
-from core.const import WIN_VECTORS
+from django.shortcuts import render, Http404, HttpResponse, redirect
+
+from core.const import WIN_VECTORS, CORNERS
 from core.game import Game
 
 
@@ -34,7 +34,7 @@ def standard(request, **kwargs):
             context = dict()
             # Take the position indicated by <move>
             g.take('human', int(move))
-            if len(g.available()) != 0:
+            if len(g.available) != 0:
                 # There are still moves available, so just make it feel like the computer is thinking a bit.
                 # Response is otherwise pretty much instantaneous and doesn't "feel" very real.
                 sleep(2)
@@ -54,20 +54,10 @@ def standard(request, **kwargs):
                     # Take the center position first, if available (avoid unnecessary processing of minimax)
                     take = 4
                 elif g.o[0] == 4 and len(g.x) == 0:
-                    # If the opponent takes center first, take the first corner (again, avoiding minimax)
-                    take = 0
+                    # If the opponent takes center first, take one of the corners (again, avoiding minimax)
+                    take = CORNERS[random.randrange(0, 4)]
                 else:
-                    # If either the machine or the human has a winnable move to make, take appropriate action
-                    # (i.e. win or block as necessary--still avoiding minimax to save overhead)
-                    win = g.winnable('machine')
-                    block = g.winnable('human')
-                    if win:
-                        take = win
-                    elif block:
-                        take = block
-                    else:
-                        # Now let minimax go to work to find the best move.
-                        take = g.eval_game('machine')
+                    take = g.next_move
                 g.take('machine', take)
                 winner = g.winner('machine')
                 # If the machine has won, set game over and the winning vector for return to UI
@@ -81,13 +71,14 @@ def standard(request, **kwargs):
             if over:
                 # The game is over, so reset the game--this actually doesn't seem to work with the runserver though for
                 # some reason.  You actually have to stop and restart the runserver to reset the game.  Not sure why.
-                g.reset()
+                Game.reset()
             # Set up the response dictionary and resturn as JSON for handling by the UI
             context['move'] = take
             context['over'] = over
             context['result'] = result
             return HttpResponse(json.dumps(context), content_type="application/json")
         except Exception, ex:
+            print traceback.format_exc()
             raise Http404
     return render(request, 'standard.html')
 
@@ -113,6 +104,7 @@ def jerk(request, **kwargs):
         context = dict(
             winner=winner
         )
+        Game.reset()
         return HttpResponse(json.dumps(context), content_type="application/json")
     return render(request, 'jerk.html')
 
@@ -144,4 +136,5 @@ def nsa(request, **kwargs):
             return HttpResponse(json.dumps(context), content_type="application/json")
         except:
             raise Http404
+    Game.reset()
     return render(request, 'nsa.html')
