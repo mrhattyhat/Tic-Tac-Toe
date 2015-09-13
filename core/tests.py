@@ -75,12 +75,8 @@ class TicTacToeTest(unittest.TestCase):
         """Test game evaluation - minimax."""
 
         Game.reset()
+        self.board.take('human', 0)
         self.board.take('human', 4)
-        self.board.take('human', 2)
-        self.board.take('human', 7)
-        self.board.take('human', 8)
-        self.board.take('machine', 0)
-        self.board.take('machine', 1)
-        self.board.take('machine', 5)
+        self.board.take('machine', 8)
         move = self.board.next_move
-        self.assertTrue(move == 6, 'Expected to choose position 6 to force a draw')
+        self.assertTrue(move == 2 or move == 6, 'Expected to choose position 2 or 6 to lead to a draw')
