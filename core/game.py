@@ -14,7 +14,6 @@ class Game(object):
     x = []
     o = []
     move = None
-    move_scores = {}
 
     @property
     def available(self):
@@ -36,7 +35,6 @@ class Game(object):
 
     @property
     def next_move(self):
-        scores = {}
 
         win = self.winnable('machine')
         if win:
@@ -46,9 +44,7 @@ class Game(object):
         if block:
             return block
 
-        self.move_scores = {}
-        self.eval_tree('machine')
-        scores = self.move_scores[1]
+        scores = self.eval_tree('machine')
 
         return max(scores, key=scores.get)
 
@@ -58,14 +54,10 @@ class Game(object):
         depth += 1  # Recursion depth, incrementing by one with each pass
         scores = {}  # The collection of scores for each of the moves evaluated
         opponent = self.switch_player(player)  # opponent gets passed to next_move for minimax recursion
-        bumper = '--- ' * depth
-        print self.available
 
         for m in self.available:  # Start evaluating available moves
             self.take(player, m)  # Take the proposed move
-            print 'Move {0} {1} {2} takes position {3}'.format(depth, bumper, player, m)
             if self.winner(player):
-                print '#### {0} wins ####'.format(player)
                 self.clear(player, m)
                 if player == 'machine':
                     scores[m] = 10
@@ -80,13 +72,11 @@ class Game(object):
                 score = max(scores.itervalues())
             else:
                 score = min(scores.itervalues())
-            print 'Move {0} scores: {1}'.format(depth, scores)
-            self.move_scores[depth] = scores
-            print 'Returning {0} for {1}'.format(score, player)
-            return score
+            if depth == 1:
+                return scores
+            else:
+                return score
         except ValueError:
-            print 'Returning 0 for move {0}'.format(depth)
-
             return 0
 
     def winner(self, player):
