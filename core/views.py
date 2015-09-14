@@ -57,7 +57,7 @@ def standard(request, **kwargs):
                     # If the opponent takes center first, take one of the corners (again, avoiding minimax)
                     take = CORNERS[random.randrange(0, 4)]
                 else:
-                    take = g.next_move
+                    take = g.next_move()
                 g.take('machine', take)
                 winner = g.winner('machine')
                 # If the machine has won, set game over and the winning vector for return to UI

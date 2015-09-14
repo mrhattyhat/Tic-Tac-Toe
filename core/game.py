@@ -33,16 +33,13 @@ class Game(object):
         attr = self.__getattribute__(PLAYERS[player])
         attr.append(pos)
 
-    @property
     def next_move(self):
+        """Calculate the best next move.
 
-        win = self.winnable('machine')
-        if win:
-            return win
-
-        block = self.winnable('human')
-        if block:
-            return block
+        Mostly just a wrapper from which to invoke eval_tree (minimax). Technically I could move all the "work" into
+        eval_tree and remove this function, but this keeps the code conceptually cleaner and avoids me having to add a
+        bunch of if statements to eval_tree to decide what exactly to return and when.
+        """
 
         scores = self.eval_tree('machine')
 
@@ -55,29 +52,33 @@ class Game(object):
         scores = {}  # The collection of scores for each of the moves evaluated
         opponent = self.switch_player(player)  # opponent gets passed to next_move for minimax recursion
 
-        for m in self.available:  # Start evaluating available moves
+        # Start evaluating available moves
+        for m in self.available:
             self.take(player, m)  # Take the proposed move
-            if self.winner(player):
-                self.clear(player, m)
+            if self.winner(player):  # See if proposed move gives the win to <player>
+                self.clear(player, m)  # Clear the evaluated move
                 if player == 'machine':
+                    # Machine always gets positive scores for wins
                     scores[m] = 10
                 else:
+                    # Opponent always gets negative scores for wins
                     scores[m] = -10
                 break
-            scores[m] = self.eval_tree(opponent, depth)
-            self.clear(player, m)
+            scores[m] = self.eval_tree(opponent, depth)  # save the score and continue the game simulation
+            self.clear(player, m)  # clear the evaluated move
 
         try:
-            if player == 'machine':
-                score = max(scores.itervalues())
-            else:
-                score = min(scores.itervalues())
             if depth == 1:
                 return scores
             else:
-                return score
+                if player == 'machine':
+                    # Machine always wants MAX score moves (the "max" of minimax)
+                    return max(scores.itervalues())
+                else:
+                    # Opponent (human) always gets MIN score moves
+                    return min(scores.itervalues())
         except ValueError:
-            return 0
+            return 0  # We have a draw
 
     def winner(self, player):
         """Check to see if <player> has won the game"""
@@ -117,7 +118,8 @@ class Game(object):
                             return win
         return False
 
-    def switch_player(self, player):
+    @staticmethod
+    def switch_player(player):
         """Return the opponent of <player>.  This becomes useful for the back-and-forth nature of minimax."""
 
         return [k for k, v in PLAYERS.iteritems() if k != player][0]

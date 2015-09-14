@@ -78,5 +78,5 @@ class TicTacToeTest(unittest.TestCase):
         self.board.take('human', 0)
         self.board.take('human', 4)
         self.board.take('machine', 8)
-        move = self.board.next_move
+        move = self.board.next_move()
         self.assertTrue(move == 2 or move == 6, 'Expected to choose position 2 or 6 to lead to a draw')
