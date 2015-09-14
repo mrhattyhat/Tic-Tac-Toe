@@ -12,9 +12,9 @@ from core.const import PLAYERS, WIN_VECTORS, CORNERS
 
 
 class Game(object):
-    x = []
-    o = []
     move = None
+    o = []
+    x = []
 
     @property
     def available(self):
@@ -28,32 +28,11 @@ class Game(object):
             p += 1
         return moves
 
-    def take(self, player, pos):
-        """Assign the chose position to the given player"""
+    def clear(self, player, pos):
+        """Clear a given move from <player>'s occupied positions"""
 
-        attr = self.__getattribute__(PLAYERS[player])
-        attr.append(pos)
-
-    def next_move(self):
-        """Calculate the best next move."""
-
-        # Take the center position first, if available (avoid unnecessary processing of eval_tree)
-        if 4 not in self.o and 4 not in self.x:
-            return 4
-
-        # If the opponent takes center first, take one of the corners (again, avoiding eval_tree)
-        if self.o[0] == 4 and len(self.x) == 0:
-            return CORNERS[random.randrange(0, 4)]
-
-        # If possible, win the game. I found that eval_tree (minimax) will definitely not lose, but when faced with the
-        # decision to block vs. win, it chooses to block.
-        win = self.winnable('machine')
-        if win:
-            return win
-
-        scores = self.eval_tree('machine')
-
-        return max(scores, key=scores.get)
+        moves = self.__getattribute__(PLAYERS[player])
+        moves.remove(pos)
 
     def eval_tree(self, player, depth=0):
         """Determine the next move based on the implementation of the famous minimax algorithm"""
@@ -90,17 +69,45 @@ class Game(object):
         except ValueError:
             return 0  # We have a draw
 
-    def winner(self, player):
-        """Check to see if <player> has won the game"""
+    def next_move(self):
+        """Calculate the best next move."""
 
-        # Get the occupied positions held by <player>
-        occupied = self.__getattribute__(PLAYERS[player])
-        # Loop over all 3-digit permutations of <player>'s positions, comparing each one against known win vectors.
-        # If we find a match, we have a winner.
-        for p in itertools.permutations(occupied, 3):
-            if p in WIN_VECTORS:
-                return p
-        return False
+        # Take the center position first, if available (avoid unnecessary processing of eval_tree)
+        if 4 not in self.o and 4 not in self.x:
+            return 4
+
+        # If the opponent takes center first, take one of the corners (again, avoiding eval_tree)
+        if self.o[0] == 4 and len(self.x) == 0:
+            return CORNERS[random.randrange(0, 4)]
+
+        # If possible, win the game. I found that eval_tree (minimax) will definitely not lose, but when faced with the
+        # decision to block vs. win, it chooses to block.
+        win = self.winnable('machine')
+        if win:
+            return win
+
+        scores = self.eval_tree('machine')
+
+        return max(scores, key=scores.get)
+
+    @classmethod
+    def reset(cls):
+        """Reset the game"""
+
+        cls.x = []
+        cls.o = []
+
+    @staticmethod
+    def switch_player(player):
+        """Return the opponent of <player>.  This becomes useful for the back-and-forth nature of minimax."""
+
+        return [k for k, v in PLAYERS.iteritems() if k != player][0]
+
+    def take(self, player, pos):
+        """Assign the chose position to the given player"""
+
+        attr = self.__getattribute__(PLAYERS[player])
+        attr.append(pos)
 
     def winnable(self, player):
         """Test if the current game state is winnable by <player>.
@@ -128,21 +135,14 @@ class Game(object):
                             return win
         return False
 
-    @staticmethod
-    def switch_player(player):
-        """Return the opponent of <player>.  This becomes useful for the back-and-forth nature of minimax."""
+    def winner(self, player):
+        """Check to see if <player> has won the game"""
 
-        return [k for k, v in PLAYERS.iteritems() if k != player][0]
-
-    def clear(self, player, pos):
-        """Clear a given move from <player>'s occupied positions"""
-
-        moves = self.__getattribute__(PLAYERS[player])
-        moves.remove(pos)
-
-    @classmethod
-    def reset(cls):
-        """Reset the game"""
-
-        cls.x = []
-        cls.o = []
+        # Get the occupied positions held by <player>
+        occupied = self.__getattribute__(PLAYERS[player])
+        # Loop over all 3-digit permutations of <player>'s positions, comparing each one against known win vectors.
+        # If we find a match, we have a winner.
+        for p in itertools.permutations(occupied, 3):
+            if p in WIN_VECTORS:
+                return p
+        return False
