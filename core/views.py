@@ -79,9 +79,8 @@ def standard(request, **kwargs):
 def jerk(request, **kwargs):
     """The Jerk Computer game.
 
-    This is the opponent that accomplishes exactly what the instructions say--never lose--but
-    he's kind of a jerk about it.  He doesn't follow the official tic-tac-toe rules (it's not explicitly required by
-    the instructions)."""
+    This opponent accomplishes exactly what the game is supposed to do: never lose.  But he's kind of a jerk about it.
+    He doesn't follow the official tic-tac-toe rules."""
 
     move = kwargs.get('move', None)
     if move:
