@@ -6,8 +6,9 @@ and treaty provisions.
 """
 
 import itertools
+import random
 
-from core.const import PLAYERS, WIN_VECTORS
+from core.const import PLAYERS, WIN_VECTORS, CORNERS
 
 
 class Game(object):
@@ -34,12 +35,21 @@ class Game(object):
         attr.append(pos)
 
     def next_move(self):
-        """Calculate the best next move.
+        """Calculate the best next move."""
 
-        Mostly just a wrapper from which to invoke eval_tree (minimax). Technically I could move all the "work" into
-        eval_tree and remove this function, but this keeps the code conceptually cleaner and avoids me having to add a
-        bunch of if statements to eval_tree to decide what exactly to return and when.
-        """
+        # Take the center position first, if available (avoid unnecessary processing of eval_tree)
+        if 4 not in self.o and 4 not in self.x:
+            return 4
+
+        # If the opponent takes center first, take one of the corners (again, avoiding eval_tree)
+        if self.o[0] == 4 and len(self.x) == 0:
+            return CORNERS[random.randrange(0, 4)]
+
+        # If possible, win the game. I found that eval_tree (minimax) will definitely not lose, but when faced with the
+        # decision to block vs. win, it chooses to block.
+        win = self.winnable('machine')
+        if win:
+            return win
 
         scores = self.eval_tree('machine')
 

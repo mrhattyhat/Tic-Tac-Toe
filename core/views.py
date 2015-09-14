@@ -27,7 +27,7 @@ def standard(request, **kwargs):
     move = kwargs.get('move', None)
     if move:
         try:
-            # Start the game and set initialize some useful variables
+            # Start the game and initialize some useful variables
             g = Game()
             over = False
             result = {'result': ''}
@@ -50,14 +50,7 @@ def standard(request, **kwargs):
                 # o = request.GET.get('o', None)
                 # if o:
                 #     g.o = [int(i) for i in o.strip(',').split(',')]
-                if 4 not in g.o and 4 not in g.x:
-                    # Take the center position first, if available (avoid unnecessary processing of minimax)
-                    take = 4
-                elif g.o[0] == 4 and len(g.x) == 0:
-                    # If the opponent takes center first, take one of the corners (again, avoiding minimax)
-                    take = CORNERS[random.randrange(0, 4)]
-                else:
-                    take = g.next_move()
+                take = g.next_move()
                 g.take('machine', take)
                 winner = g.winner('machine')
                 # If the machine has won, set game over and the winning vector for return to UI
@@ -77,7 +70,7 @@ def standard(request, **kwargs):
             context['over'] = over
             context['result'] = result
             return HttpResponse(json.dumps(context), content_type="application/json")
-        except Exception, ex:
+        except Exception:
             print traceback.format_exc()
             raise Http404
     return render(request, 'standard.html')
