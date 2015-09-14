@@ -44,12 +44,12 @@ def standard(request, **kwargs):
                 # preserves the game state between requests, so this isn't necessary if using the runserver.  In the
                 # real world, this would take all the moves that have been made so far, which are submitted from the UI,
                 # and reconstruct the game state from them.
-                # x = request.GET.get('x', None)
-                # if x:
-                #     g.x = [int(i) for i in x.strip(',').split(',')]
-                # o = request.GET.get('o', None)
-                # if o:
-                #     g.o = [int(i) for i in o.strip(',').split(',')]
+                x = request.GET.get('x', None)
+                if x:
+                    g.x = [int(i) for i in x.strip(',').split(',')]
+                o = request.GET.get('o', None)
+                if o:
+                    g.o = [int(i) for i in o.strip(',').split(',')]
                 take = g.next_move()
                 g.take('machine', take)
                 winner = g.winner('machine')
