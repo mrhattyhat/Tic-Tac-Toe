@@ -12,7 +12,7 @@ from time import sleep
 
 from django.shortcuts import render, Http404, HttpResponse, redirect
 
-from core.const import WIN_VECTORS, CORNERS
+from core.const import WIN_VECTORS
 from core.game import Game
 
 
