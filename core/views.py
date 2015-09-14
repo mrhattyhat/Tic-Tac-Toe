@@ -108,8 +108,8 @@ def nsa(request, **kwargs):
     They're always listening...
 
     Basically, the "NSA" listens to every event, so even a hover by the human triggers a move by the NSA.  With each
-    move, the occupied positions are sent to the view to determine when there is a win.  Only NSA moves are recorded, so
-    naturally, the human can't win against the NSA.  (Just like life, man)"""
+    move, the occupied positions are sent to the view to determine when there is a win.  Ironically, in this game, only
+    NSA moves are recorded, so naturally, the human can't win against the NSA.  (Just like life, man)"""
 
     move = kwargs.get('move', None)
     if move:
