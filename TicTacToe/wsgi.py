@@ -21,8 +21,8 @@ import os
 # os.environ["DJANGO_SETTINGS_MODULE"] = "TicTacToe.settings"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "TicTacToe.settings")
 
-activate_env = os.path.expanduser("/home/rhansen/.virtualenvs/tictactoe/bin/activate_this.py")
-execfile(activate_env, dict(__file__=activate_env))
+# activate_env = os.path.expanduser("/home/rhansen/.virtualenvs/tictactoe/bin/activate_this.py")
+# execfile(activate_env, dict(__file__=activate_env))
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
