@@ -31,7 +31,8 @@ $(document).ready(function(){
             // Show a bit of cheek
             setTimeout(function() {
                 $("#ftr_msg").html("" +
-                    "(We're listening to your events; We <span style='font-style:italic'>always</span> know where you are...)");
+                    "(We're listening to your events; " +
+                    "We <span style='font-style:italic'>always</span> know where you are...)");
             }, 1000)
         }
     });

@@ -15,15 +15,22 @@ $(document).ready(function(){
          * */
         if (turn == 'human') {
             turn = 'machine';
-            // Turn on the blue O (human's piece)
-            $(this).children().attr('src', '/static/img/blue_o.png');
             // Parse the chosen cell number from the ID
             var chosen = $(this).attr('id').substr(1,1);
+            if (isOccupied(chosen)) {
+                $("#hdr_msg").html('Trying to take over occupied territory? Who are you, Putin?');
+                turn = 'human';
+                return false;
+            } else {
+                $("#hdr_msg").html('&nbsp;');
+            }
+            // Turn on the blue O (human's piece)
+            $(this).children().attr('src', '/static/img/blue_o.png');
             // Build the URL
             var url = window.location + 'move/' + chosen + '/';
             // Collect all occupied cells for submission to the game API
             var occupied = getOccupied();
-            $.getJSON(url, occupied, function(data) {
+            $.getJSON(url, occupied, function (data) {
                 if (data.over == true) {
                     game_over = true;
                 } else {
@@ -34,7 +41,7 @@ $(document).ready(function(){
                     // Set the red X for the computers move
                     $("div[id=c" + data.move + "] > img").attr('src', '/static/img/red_x.png');
                     // If there is a win, turn on the grays for the winning cells
-                    $.each(data.result.result, function(key, val) {
+                    $.each(data.result.result, function (key, val) {
                         $("#c" + val + "> .winner").css('visibility', 'visible');
                         $("#hdr_msg").html('I WIN!');
                     });
@@ -43,7 +50,7 @@ $(document).ready(function(){
                 }
             });
         } else {
-            // Some attitude to show if the human click's when the game is over or it's the computers turn.
+            // Some attitude to show if the human clicks when the game is over or it's the computers turn.
             if (game_over) {
                 $("#hdr_msg").html('Uh...do you not know how to play this game?');
             } else {

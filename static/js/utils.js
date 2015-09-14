@@ -7,6 +7,7 @@
 
 function getOccupied() {
     /** Return all the occupied positions on the board for both players **/
+
     var occupied = {};
     var o = '';
     var x = '';
@@ -23,5 +24,20 @@ function getOccupied() {
     });
     occupied['x'] = x;
     occupied['o'] = o;
+    return occupied;
+}
+
+function isOccupied(chosen) {
+    /** Return true if the chosen position is already occupied **/
+    var occupied = false;
+
+    $(".cell").each(function() {
+        var cell = $(this).attr('id').substr(1,1);
+        var src = $(this).children().attr('src');
+        if (cell == chosen && src != '/static/img/blank.png') {
+            occupied = true;
+        }
+    });
+
     return occupied;
 }

@@ -23,7 +23,8 @@ $(document).ready(function(){
         });
         game_over = true;
         setTimeout( function() {
-            $("#ftr_msg").html('Hey, the instructions just said "never lose," they never said I had to follow the rules...')}
+            $("#ftr_msg").html('Hey, the instructions just said "never lose," ' +
+                'they never said I had to follow the rules...')}
             , 3000
         );
     });

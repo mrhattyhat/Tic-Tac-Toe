@@ -90,6 +90,7 @@ body {
 
 .title {
     margin-left: -45px;
+    width: 500px;
 }
 
 .winner {
@@ -103,6 +104,12 @@ body {
 
 .with_bottom {
     border-bottom-color: #000;
+}
+
+#restart {
+    padding-top: 15px;
+    cursor: pointer;
+    color: #054ae7;
 }
 
 #starter {

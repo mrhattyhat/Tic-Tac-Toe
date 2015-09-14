@@ -27,6 +27,7 @@
             </select>
         </div>
         <div class="legend icon"><img src="{% static "img/red_x.png" %}" height="20" width="20"/></div>
+        <div class="label" id="restart">Start over</div>
     </div>
     <div class="hblock title">
         <h1>Tic-Tac-Tyranny</h1>
@@ -82,12 +83,16 @@
 <div id="ftr_msg" class="msg footer"></div>
 <script type="text/javascript">
     $(document).ready(function(){
-       $("#opponent").change(function(e){
-           var url = '/' + e.target.value + '/';
-           $(location).attr('href', url);
-       });
+        $("#opponent").change(function(e){
+            var url = '/' + e.target.value + '/';
+            $(location).attr('href', url);
+        });
+
+        $("#restart").click(function(e){
+            location.reload();
+        });
     });
-    var opp = window.location.pathname.replace(/\//g, '')
+    var opp = window.location.pathname.replace(/\//g, '');
     $("#opponent").val(opp);
 </script>
 {% block js %}
